@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>Onesta Balance Check™ V5</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{ --gold:#C8902A; --gold-l:#E8B84B; --ink:#0C0800; --text:#EDE4CC; --sub:rgba(237,228,204,.75); }
+body{ font-family:'Plus Jakarta Sans',sans-serif; background:var(--ink); color:var(--text); margin:0; overflow-x:hidden; }
+.screen{ display:none; padding:2rem 1.5rem; flex-direction:column; align-items:center; min-height:100vh; text-align:center; }
+.screen.active{ display:flex; }
+.brand-bee{ font-size:3rem; margin-bottom:1rem; }
+h1{ font-family:'Playfair Display',serif; font-size:2.5rem; margin-bottom:1rem; color:var(--gold-l); }
+.btn{ width:100%; max-width:340px; padding:1.1rem; background:linear-gradient(135deg,var(--gold-l),var(--gold)); color:var(--ink); font-weight:800; border:none; border-radius:99px; cursor:pointer; margin-top:1.5rem; text-decoration:none; display:inline-block; }
+.opt{ width:100%; max-width:340px; padding:1rem; background:rgba(255,255,255,0.05); border:1px solid rgba(200,144,42,0.2); border-radius:12px; margin-bottom:0.7rem; cursor:pointer; transition:0.3s; }
+.opt.sel{ border-color:var(--gold); background:rgba(200,144,42,0.15); }
+input{ width:100%; max-width:320px; padding:1rem; border-radius:12px; border:1px solid var(--gold); background:none; color:white; margin-bottom:1rem; outline:none; }
+.insight-card{ background:rgba(200,144,42,0.08); border-left:4px solid var(--gold); padding:1.2rem; border-radius:0 12px 12px 0; margin-top:1.5rem; max-width:340px; text-align:left; font-size:0.9rem; line-height:1.6; }
+</style>
+</head>
+<body>
+
+<div id="s-cover" class="screen active">
+    <div class="brand-bee">🐝</div>
+    <h1>Balance Check™</h1>
+    <p style="color:var(--sub)">Standardisasi Pertahanan Seluler & NK Cell</p>
+    <div style="margin-top:2rem; width:100%;">
+        <input type="text" id="user-name" placeholder="Nama Lengkap">
+        <input type="tel" id="user-wa" placeholder="WhatsApp (cth: 0812...)">
+    </div>
+    <button class="btn" onclick="goToProfile()">Mulai Analisis →</button>
+</div>
+
+<div id="s-profile" class="screen">
+    <div class="brand-bee">🧬</div>
+    <h2>Presisi Hormonal</h2>
+    <p style="color:var(--sub); margin-bottom:2rem;">Data ini membantu akurasi analisis NK Cell Anda.</p>
+    
+    <p style="font-size:0.7rem; color:var(--gold); letter-spacing:0.1em;">JENIS KELAMIN</p>
+    <div style="display:flex; gap:0.5rem; width:100%; max-width:340px; margin-bottom:1.5rem;">
+        <div class="opt" id="g-pria" onclick="setGender('Pria')">Pria</div>
+        <div class="opt" id="g-wanita" onclick="setGender('Wanita')">Wanita</div>
+    </div>
+
+    <p style="font-size:0.7rem; color:var(--gold); letter-spacing:0.1em;">KATEGORI USIA</p>
+    <div class="opt" id="a-child" onclick="setAge('Anak')">Anak (1-12 Thn)</div>
+    <div class="opt" id="a-under" onclick="setAge('<40')">Di Bawah 40 Thn (Fit for Life)</div>
+    <div class="opt" id="a-over" onclick="setAge('>40')">Di Atas 40 Thn (Anti-Decline)</div>
+
+    <button class="btn" id="btn-result" style="opacity:0.3; pointer-events:none;" onclick="showResult()">Lihat Hasil Akhir →</button>
+</div>
+
+<div id="s-result" class="screen">
+    <div class="brand-bee">🏆</div>
+    <h2>Hasil Analisis</h2>
+    <div id="insight-box" class="insight-card"></div>
+    <p style="font-size:0.8rem; margin-top:2rem; color:var(--sub);">Klik tombol di bawah untuk konsultasi ritual harian yang tepat dengan tim Onesta.</p>
+    <a href="#" id="wa-link" target="_blank" class="btn">🍯 Konsultasi via WhatsApp</a>
+    <button class="btn" style="background:none; border:1px solid var(--gold); color:var(--gold); margin-top:1rem;" onclick="location.reload()">↺ Cek Ulang</button>
+</div>
+
+<script>
+let data = { name:'', wa:'', gender:'', age:'' };
+
+function goToProfile() {
+    data.name = document.getElementById('user-name').value;
+    data.wa = document.getElementById('user-wa').value;
+    if(data.name && data.wa) { document.getElementById('s-cover').classList.remove('active'); document.getElementById('s-profile').classList.add('active'); }
+    else alert('Mohon isi Nama dan WA Anda.');
+}
+
+function setGender(g) {
+    data.gender = g;
+    document.querySelectorAll('[id^="g-"]').forEach(el => el.classList.remove('sel'));
+    document.getElementById('g-' + (g==='Pria'?'pria':'wanita')).classList.add('sel');
+    checkReady();
+}
+
+function setAge(a) {
+    data.age = a;
+    document.querySelectorAll('[id^="a-"]').forEach(el => el.classList.remove('sel'));
+    const map = {'Anak':'a-child','<40':'a-under','>40':'a-over'};
+    document.getElementById(map[a]).classList.add('sel');
+    checkReady();
+}
+
+function checkReady() {
+    if(data.gender && data.age) { document.getElementById('btn-result').style.opacity='1'; document.getElementById('btn-result').style.pointerEvents='auto'; }
+}
+
+function showResult() {
+    document.getElementById('s-profile').classList.remove('active');
+    document.getElementById('s-result').classList.add('active');
+    
+    let insight = "";
+    if(data.age === 'Anak') {
+        insight = "<b>Fokus Junior:</b> Pertahanan NK Cell pada anak sangat krusial untuk masa pertumbuhan. Onesta Junior membantu ksatria kecil Anda tetap tangguh menghadapi lingkungan sekolah.";
+    } else if(data.age === '>40') {
+        insight = `<b>Fokus Anti-Decline (${data.gender}):</b> Di usia 40+, aktivitas NK Cell alami menurun. Ritual Onesta membantu menjaga ketajaman garda depan seluler Anda agar tetap vital dan jernih.`;
+    } else {
+        insight = `<b>Fokus Fit-for-Life (${data.gender}):</b> Optimalkan energi harian dan kecepatan recovery seluler Anda. NK Cell yang aktif memastikan tubuh Anda selalu siap menghadapi stres modern.`;
+    }
+    
+    document.getElementById('insight-box').innerHTML = insight;
+
+    // WA Link Logic
+    const msg = `Halo Onesta! Saya ${data.name}. Saya baru saja cek Balance Profil saya:\n\n- Gender: ${data.gender}\n- Usia: ${data.age}\n\nSaya tertarik dengan ritual Onesta untuk ${insight.split(':')[0].replace('<b>','').replace('</b>','')}. Boleh info lebih lanjut?`;
+    document.getElementById('wa-link').href = `https://wa.me/62818843682?text=${encodeURIComponent(msg)}`;
+}
+</script>
+
+</body>
+</html>
