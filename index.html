@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onesta Balance Check™ V9.2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root{ --gold:#C8902A; --gold-l:#E8B84B; --ink:#0C0800; --text:#EDE4CC; --sub:rgba(237,228,204,.75); }
+        body{ font-family:'Plus Jakarta Sans',sans-serif; background:var(--ink); color:var(--text); margin:0; text-align:center; }
+        .screen{ display:none; padding:1.5rem; flex-direction:column; align-items:center; min-height:100vh; justify-content:center; }
+        .active{ display:flex; }
+        h1{ font-family:'Playfair Display',serif; font-size:2.3rem; color:var(--gold-l); margin:0.5rem 0; }
+        .btn{ width:100%; max-width:340px; padding:1.1rem; background:linear-gradient(135deg,var(--gold-l),var(--gold)); color:var(--ink); font-weight:800; border:none; border-radius:99px; cursor:pointer; margin-top:1rem; text-decoration:none; display:inline-block; }
+        .opt{ width:100%; max-width:340px; padding:1rem; background:rgba(255,255,255,0.05); border:1px solid rgba(200,144,42,0.2); border-radius:12px; margin-bottom:0.6rem; cursor:pointer; text-align: left; }
+        .opt.sel{ border-color:var(--gold); background:rgba(200,144,42,0.15); }
+        input{ width:100%; max-width:320px; padding:1.1rem; border-radius:12px; border:1px solid var(--gold); background:none; color:white; margin-bottom:1rem; outline:none; font-size:1rem; }
+        .insight-card{ background:rgba(200,144,42,.08); border-left:4px solid var(--gold); padding:1.3rem; border-radius:0 12px 12px 0; text-align:left; font-size:0.9rem; line-height:1.6; margin-top:1.2rem; }
+    </style>
+</head>
+<body>
+
+<div id="s-cover" class="screen active">
+    <div style="font-size:2.5rem; margin-bottom:1rem;">🐝</div>
+    <h1>Balance Check™</h1>
+    <p style="color:var(--sub); margin-bottom: 2rem;">Cek Kondisi "Pasukan Khusus" NK Cell Anda</p>
+    <input type="text" id="u-name" placeholder="Nama Lengkap">
+    <input type="tel" id="u-wa" placeholder="WhatsApp (08...)">
+    <button class="btn" onclick="go('s-profile')">Mulai Analisis →</button>
+</div>
+
+<div id="s-profile" class="screen">
+    <h2 style="font-family:'Playfair Display',serif;">Data Seluler</h2>
+    <p style="font-size:0.75rem; color:var(--gold); letter-spacing:1px; margin-bottom:0.8rem;">GENDER</p>
+    <div style="display:flex; gap:0.5rem; width:100%; max-width:340px; margin-bottom:1.2rem;">
+        <div class="opt" id="g-pria" onclick="setG('Pria')" style="text-align:center; flex:1; padding:0.8rem;">Pria</div>
+        <div class="opt" id="g-wanita" onclick="setG('Wanita')" style="text-align:center; flex:1; padding:0.8rem;">Wanita</div>
+    </div>
+    <p style="font-size:0.75rem; color:var(--gold); letter-spacing:1px; margin-bottom:0.8rem;">KATEGORI</p>
+    <div class="opt" id="a-child" onclick="setA('Anak')"><b>Children</b><br><small>Masa Pertumbuhan Emas</small></div>
+    <div class="opt" id="a-under" onclick="setA('<40')"><b>Productive Age (< 40th)</b><br><small>Performa & Stress Management</small></div>
+    <div class="opt" id="a-everyone" onclick="setA('Everyone')"><b>Daily Balance (Umum)</b><br><small>Proteksi Harian Segala Usia</small></div>
+    <div class="opt" id="a-over" onclick="setA('>40')"><b>Adults (> 40th)</b><br><small>Restorasi & Cleaning Seluler</small></div>
+    <button class="btn" id="btn-res" style="opacity:0.3; pointer-events:none;" onclick="done()">Lihat Hasil →</button>
+</div>
+
+<div id="s-result" class="screen">
+    <div style="font-size:2.2rem; margin-bottom: 0.5rem;">🧬</div>
+    <h2 id="res-title" style="font-family:'Playfair Display',serif;">Hasil Analisis</h2>
+    <div id="res-insight" class="insight-card"></div>
+    <a href="#" id="wa-admin" target="_blank" class="btn">🍯 Konsultasi & Ritual Onesta</a>
+    <a href="#" id="wa-share" target="_blank" class="btn" style="background:none; border:2px solid #25D366; color:#25D366;">📱 Share ke Grup WA</a>
+    <button class="btn" style="background:none; border:1px solid var(--sub); color:var(--sub); font-size:0.8rem;" onclick="location.reload()">↺ Cek Ulang</button>
+</div>
+
+<script>
+    let d = { name:'', gender:'', age:'' };
+    function go(id) {
+        d.name = document.getElementById('u-name').value;
+        if(d.name) { document.getElementById('s-cover').style.display='none'; document.getElementById(id).style.display='flex'; }
+        else alert('Mohon isi nama Anda.');
+    }
+    function setG(g) { 
+        d.gender = g; 
+        document.querySelectorAll('[id^="g-"]').forEach(e=>e.classList.remove('sel')); 
+        document.getElementById('g-'+g.toLowerCase()).classList.add('sel'); 
+        check(); 
+    }
+    function setA(a) { 
+        d.age = a; 
+        document.querySelectorAll('[id^="a-"]').forEach(e=>e.classList.remove('sel')); 
+        const m={'Anak':'a-child','<40':'a-under','Everyone':'a-everyone','>40':'a-over'}; 
+        document.getElementById(m[a]).classList.add('sel'); 
+        check(); 
+    }
+    function check() { if(d.gender && d.age) { document.getElementById('btn-res').style.opacity='1'; document.getElementById('btn-res').style.pointerEvents='auto'; } }
+
+    function done() {
+        document.getElementById('s-profile').style.display='none';
+        document.getElementById('s-result').style.display='flex';
+        let t = ""; let i = ""; let waMsg = "";
+
+        if(d.age === 'Anak') {
+            t = "🛡️ Sang Ksatria Tangguh";
+            i = "<b>Analisis NK Cell Junior:</b> Sebagai 'Ksatria Intelijen', NK Cell anak sangat krusial dalam mengenali ancaman. Onesta Junior membantu ksatria ini tetap siaga menjaga pertumbuhannya.";
+            waMsg = `Baru tahu kalau di tubuh *anak saya* ada Pasukan Khusus NK Cell! 🧬 Hasil: ${t}. Cek punyamu: `;
+        } else if(d.age === '<40') {
+            t = "⚡ Peak Performance Bodyguard";
+            i = "<b>Analisis Usia Produktif:</b> Stress kerja dan aktivitas tinggi adalah tantangan utama. NK Cell Anda bekerja ekstra sebagai 'Bodyguard' internal. Ritual Onesta menjaga pasukan ini tetap tangguh.";
+            waMsg = `Ternyata NK Cell itu "Bodyguard" internal kita! 🧬 Hasil kuis saya: ${t}. Cek profilmu: `;
+        } else if(d.age === '>40') {
+            t = "✨ Restoration Mastery";
+            i = "<b>Analisis NK Cell 40+:</b> NK Cell di usia ini fokus sebagai 'Cleaning Service' seluler. Ritual Onesta mengaktivasi ketajaman pasukan pembersih ini agar vitalitas tetap terjaga.";
+            waMsg = `Baru tahu ada "Pasukan Khusus" NK Cell di tubuh kita! 🧬 Hasil saya: ${t}. Cek di sini: `;
+        } else {
+            t = "🛡️ Daily Balance Protector";
+            i = "<b>Analisis Kelompok Umum:</b> Apapun aktivitasnya, NK Cell menjaga keseimbangan harian. Onesta memberikan nutrisi hidup agar bodyguard internal Anda tidak kelelahan menghadapi polusi.";
+            waMsg = `Ternyata ada "Pasukan Khusus" NK Cell yang jagain kita! 🧬 Hasil: ${t}. Cek punyamu: `;
+        }
+
+        document.getElementById('res-title').innerText = t;
+        document.getElementById('res-insight').innerHTML = i;
+        const link = "https://gto888star.github.io/gemini-gto/";
+        document.getElementById('wa-admin').href = `https://wa.me/62818843682?text=${encodeURIComponent('Halo Onesta, saya '+d.name+'. Hasil: '+t+' ('+d.gender+').')}`;
+        document.getElementById('wa-share').href = `https://wa.me/?text=${encodeURIComponent(waMsg + link)}`;
+    }
+</script>
+</body>
+</html>
