@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onesta Balance Check™</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root{ --gold:#C8902A; --gold-l:#E8B84B; --ink:#0C0800; --text:#EDE4CC; --sub:rgba(237,228,204,.75); }
+        body{ font-family:'Plus Jakarta Sans',sans-serif; background:var(--ink); color:var(--text); margin:0; text-align:center; }
+        .screen{ display:none; padding:2rem 1.5rem; flex-direction:column; align-items:center; min-height:100vh; justify-content:center; }
+        .active{ display:flex; }
+        h1{ font-family:'Playfair Display',serif; font-size:2.5rem; color:var(--gold-l); margin:0.5rem 0; }
+        .btn{ width:100%; max-width:340px; padding:1.1rem; background:linear-gradient(135deg,var(--gold-l),var(--gold)); color:var(--ink); font-weight:800; border:none; border-radius:99px; cursor:pointer; margin-top:1rem; text-decoration:none; display:inline-block; }
+        .opt{ width:100%; max-width:340px; padding:1.1rem; background:rgba(255,255,255,0.05); border:1px solid rgba(200,144,42,0.2); border-radius:12px; margin-bottom:0.7rem; cursor:pointer; text-align: left; }
+        .opt.sel{ border-color:var(--gold); background:rgba(200,144,42,0.15); }
+        input{ width:100%; max-width:320px; padding:1.1rem; border-radius:12px; border:1px solid var(--gold); background:none; color:white; margin-bottom:1rem; outline:none; }
+        .insight-card{ background:rgba(200,144,42,.08); border-left:4px solid var(--gold); padding:1.5rem; border-radius:0 12px 12px 0; text-align:left; font-size:0.95rem; line-height:1.6; margin-top:1.5rem; }
+    </style>
+</head>
+<body>
+
+<div id="s-cover" class="screen active">
+    <div style="font-size:3rem; margin-bottom:1rem;">🐝</div>
+    <h1>Balance Check™</h1>
+    <p style="color:var(--sub); margin-bottom: 2rem;">Cek Kondisi Pasukan NK Cell Anda</p>
+    <input type="text" id="user-name" placeholder="Nama Lengkap">
+    <input type="tel" id="user-wa" placeholder="Nomor WhatsApp">
+    <button class="btn" onclick="nextScreen('s-profile')">Analyze Now →</button>
+</div>
+
+<div id="s-profile" class="screen">
+    <h2>Pilih Profil</h2>
+    <div class="opt" onclick="finish('Anak')"><b>Anak-anak</b><br>Masa Pertumbuhan</div>
+    <div class="opt" onclick="finish('<40')"><b>Dewasa < 40 Thn</b><br>Fit & Active</div>
+    <div class="opt" onclick="finish('>40')"><b>Dewasa > 40 Thn</b><br>Restoration</div>
+</div>
+
+<div id="s-result" class="screen">
+    <h2 id="res-title">Hasil</h2>
+    <div id="res-insight" class="insight-card"></div>
+    <a href="#" id="wa-link" target="_blank" class="btn">🍯 Konsultasi Onesta</a>
+    <button class="btn" style="background:none; border:1px solid var(--sub); color:var(--sub);" onclick="location.reload()">Cek Ulang</button>
+</div>
+
+<script>
+    let userName = "";
+    function nextScreen(id) {
+        userName = document.getElementById('user-name').value;
+        if(userName) {
+            document.getElementById('s-cover').style.display = 'none';
+            document.getElementById('s-profile').style.display = 'flex';
+        } else { alert('Mohon isi nama Bapak/Ibu.'); }
+    }
+    function finish(age) {
+        document.getElementById('s-profile').style.display = 'none';
+        document.getElementById('s-result').style.display = 'flex';
+        let title = ""; let info = "";
+        if(age === 'Anak') { title = "🛡️ Ksatria Tangguh"; info = "NK Cell anak adalah intelijen pelindung alami."; }
+        else if(age === '>40') { title = "✨ Restoration Mastery"; info = "Di usia 40+, NK Cell adalah tim pembersih seluler Bapak/Ibu."; }
+        else { title = "⚡ Peak Performance"; info = "NK Cell bekerja sebagai bodyguard dari stres harian Anda."; }
+        document.getElementById('res-title').innerText = title;
+        document.getElementById('res-insight').innerHTML = info;
+        const msg = encodeURIComponent(`Halo Onesta, saya ${userName}. Hasil kuis: ${title}.`);
+        document.getElementById('wa-link').href = `https://wa.me/62818843682?text=${msg}`;
+    }
+</script>
+</body>
+</html>
